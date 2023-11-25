@@ -1,11 +1,13 @@
-import mongoose from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  password: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-});
+const userSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    password: { type: String, required: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
+  },
+  { timestamps: true }
+);
 
 const User = mongoose.model("user", userSchema);
-
 export default User;

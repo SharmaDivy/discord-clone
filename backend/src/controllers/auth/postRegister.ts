@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import User from "../../models/user.js";
-import { encryptData } from "../../utils/crypto.js";
+import { encryptData, generateJwtToken } from "../../utils/crypto.js";
+import { AuthVerificationResponse } from "../../types/auth.js";
 
 const postRegister: RequestHandler = async (req, res, next) => {
   try {
@@ -23,13 +24,16 @@ const postRegister: RequestHandler = async (req, res, next) => {
       password: passwordHash,
     });
 
-    const jwtToken = "JWT TOKEN";
+    const token = generateJwtToken({ id: user.id, email: user.email });
+    const response: AuthVerificationResponse = {
+      token: token,
+      userDetails: {
+        name: user.name,
+        email: user.email,
+      },
+    };
 
-    return res.status(201).json({
-      name: user.name,
-      email: user.email,
-      jwtToken,
-    });
+    return res.status(201).json(response);
   } catch (e) {
     next(e);
     return res.status(500).send("Something went wrong!");
